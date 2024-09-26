@@ -1,0 +1,68 @@
+name: Sentinel GitHub YAML Updates Checker
+
+on:
+  schedule:
+    - cron: '0 0 */30 * *'  # Run every 30 days
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  check_yaml_updates:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run GitHub YAML updates checker script
+      env:
+        GITHUB_ENV: .env
+      run: |
+        python rss_sentinelrules.py
+
+    - name: Update processed versions file
+      run: |
+        awk -F ' ' -v d="$(date -u --date="365 days ago" +%Y-%m-%dT%H:%M:%S)" '$1 > d' processed_versions.txt > temp_processed_versions.txt
+        sort -u temp_processed_versions.txt > processed_versions.txt
+        rm temp_processed_versions.txt
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: '.'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v1
+
+    - name: Commit and push changes
+      uses: EndBug/add-and-commit@v9
+      with:
+        add: '.'
+        message: 'feat: GitHub YAML update check'
+        push: true
