@@ -212,3 +212,5 @@ with open(log_file, "a") as log:
         log.write(f"{datetime.datetime.utcnow()} - Files with missing 'id':\n")
         for url in invalid_entries:
             log.write(f"{url}\n")
+
+print("Sentinel RSS feed script completed.")

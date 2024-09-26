@@ -44,6 +44,7 @@ jobs:
         GITHUB_ENV: .env
       run: |
         python rss_sentinelrules.py
+        echo "Python script finished running."
 
     - name: Update processed versions file
       run: |
