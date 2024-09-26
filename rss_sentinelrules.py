@@ -33,7 +33,7 @@ github_file_urls = [
     "https://github.com/Azure/Azure-Sentinel/blob/6bdfd518b2f70098e67f9000f4e26fa459460d00/Detections/ASimDNS/imDNS_TorProxies.yaml",
     "https://github.com/Azure/Azure-Sentinel/blob/6bdfd518b2f70098e67f9000f4e26fa459460d00/Solutions/Windows%20Security%20Events/Analytic%20Rules/ExchangeOABVirtualDirectoryAttributeContainingPotentialWebshell.yaml",
     "https://github.com/Azure/Azure-Sentinel/blob/6bdfd518b2f70098e67f9000f4e26fa459460d00/Solutions/Windows%20Security%20Events/Analytic%20Rules/GainCodeExecutionADFSViaSMB.yaml",
-    "https://github.com/Azure/Azure-Sentinel/blob/6bdfd518b2f70098e67f9000f4e26fa459460d00/Solutions/Endpoint%20Threat%20Protection%20Essentials/Analytic%20Rules/LateralMovementViaDCOM.yaml"
+    "https://github.com/Azure/Azure-Sentinel/blob/6bdfd518b2f70098e67f9000f4e26fa459460d00/Solutions/Endpoint%20Threat%20Protection%20Essentials/Analytic%20Rules/LateralMovementViaDCOM.yaml",
     "https://github.com/Azure/Azure-Sentinel/blob/6bdfd518b2f70098e67f9000f4e26fa459460d00/Solutions/Endpoint%20Threat%20Protection%20Essentials/Analytic%20Rules/malware_in_recyclebin.yaml#L4",
     "https://github.com/Azure/Azure-Sentinel/blob/6bdfd518b2f70098e67f9000f4e26fa459460d00/Solutions/Azure%20Key%20Vault/Analytic%20Rules/KeyvaultMassSecretRetrieval.yaml",
     "https://github.com/Azure/Azure-Sentinel/blob/e373814e90162e0499e4bdeaa129e0ccde5668ee/Detections/MultipleDataSources/Mercury_Log4j_August2022.yaml",
@@ -212,7 +212,7 @@ with open(log_file, "a") as log:
         log.write(f"{datetime.datetime.utcnow()} - Files with missing 'id':\n")
         for url in invalid_entries:
             log.write(f"{url}\n")
-            
+
 # Set the RSS_FEED_ENTRIES environment variable to the number of processed entries
 with open(os.environ["GITHUB_ENV"], "a") as f:
     f.write(f"RSS_FEED_ENTRIES={len(all_entries)}\n")
