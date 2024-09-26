@@ -216,5 +216,3 @@ with open(log_file, "a") as log:
 # Set the RSS_FEED_ENTRIES environment variable to the number of processed entries
 with open(os.environ["GITHUB_ENV"], "a") as f:
     f.write(f"RSS_FEED_ENTRIES={len(all_entries)}\n")
-
-print("Sentinel RSS feed script completed.")
