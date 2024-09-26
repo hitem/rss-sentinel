@@ -213,6 +213,6 @@ with open(log_file, "a") as log:
         for url in invalid_entries:
             log.write(f"{url}\n")
 
-# Set the RSS_FEED_ENTRIES environment variable to the number of processed entries
+# Set the RSS_FEED_ENTRIES environment variable
 with open(os.environ["GITHUB_ENV"], "a") as f:
     f.write(f"RSS_FEED_ENTRIES={len(all_entries)}\n")
