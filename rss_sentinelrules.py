@@ -183,7 +183,7 @@ etree.SubElement(channel, "description").text = "A feed of updated YAML files fr
 etree.SubElement(channel, "lastBuildDate").text = datetime.datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
 
 # Set the maximum number of rules per message
-MAX_RULES_PER_MESSAGE = 20
+MAX_RULES_PER_MESSAGE = 60
 
 # Function to split the list into chunks of a specific size
 def chunk_list(lst, n):
