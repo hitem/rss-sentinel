@@ -199,23 +199,25 @@ def chunk_list(lst, n):
 # If there are any updated rules, process them in chunks
 if all_entries:
     chunks = list(chunk_list(all_entries, MAX_RULES_PER_MESSAGE))
-    
+    total_parts = len(chunks)  # Calculate total number of parts
+
     for i, chunk in enumerate(chunks):
-        # Create a new XML item for each chunk of 20 rules
+        # Create a new XML item for each chunk of rules
+        part_number = i + 1  # Part number starts from 1
         item = etree.SubElement(channel, "item")
         etree.SubElement(
-            item, "title").text = f"Week {datetime.datetime.now(timezone.utc).isocalendar()[1]}: Updated Rules (Part {i+1})"
+            item, "title").text = f"Week {datetime.datetime.utcnow().isocalendar()[1]}: Updated Rules (Part {part_number}/{total_parts})"
         etree.SubElement(
             item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
         etree.SubElement(item, "pubDate").text = email.utils.format_datetime(
-            datetime.datetime.now(timezone.utc))
+            datetime.datetime.utcnow())
         etree.SubElement(
             item, "guid", isPermaLink="false").text = str(uuid.uuid4())
         
         # Build description for this chunk
         description_text = "Updated rules this week:<br/>"
         for entry in chunk:
-            description_text += f"<b>Name:</b> {entry['name']} ({entry['version']})<br/>"
+            description_text += f"<b>Name:</b> {entry['name']} (Version: {entry['version']})<br/>"
             description_text += f"<b>ID:</b> <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
         
         # Add the description to the item
