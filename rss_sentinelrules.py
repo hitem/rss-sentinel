@@ -8,17 +8,14 @@ import datetime
 import os
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-import json
 import email.utils
-from dateutil import parser
 import uuid
 
 # Set up retry strategy
 retry_strategy = Retry(
     total=3,
     backoff_factor=1,
-    # Retry on common server errors
-    status_forcelist=[429, 500, 502, 503, 504],
+    status_forcelist=[429, 500, 502, 503, 504],  # Retry on common server errors
 )
 adapter = HTTPAdapter(max_retries=retry_strategy)
 session = requests.Session()
@@ -119,8 +116,6 @@ except FileNotFoundError:
     processed_versions = {}
 
 # Function to convert GitHub URL to raw URL
-
-
 def convert_to_raw_url(github_url):
     if "github.com" in github_url and "/blob/" in github_url:
         raw_url = github_url.replace(
@@ -128,26 +123,7 @@ def convert_to_raw_url(github_url):
         return raw_url
     return github_url  # If the URL is already in raw format or doesn't need conversion
 
-
-def get_last_commit_date(github_url):
-    try:
-        # Convert the GitHub URL to the GitHub API URL
-        api_url = github_url.replace(
-            "https://github.com/", "https://api.github.com/repos/").replace("/blob/", "/commits?path=")
-        headers = {"Authorization": f"token {os.getenv('MY_GH_TOKEN')}"}
-        response = session.get(api_url, headers=headers)
-        response.raise_for_status()  # Will raise an exception for 4XX/5XX errors
-        commits = response.json()
-        if commits:
-            # Get the commit date from the first (most recent) commit
-            return commits[0]['commit']['committer']['date']
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching commit date for {github_url}: {e}")
-    return None
-
 # Function to extract only the required fields from the YAML content using PyYAML
-
-
 def extract_essential_fields(yaml_content, url):
     fields = {}
     try:
@@ -156,28 +132,14 @@ def extract_essential_fields(yaml_content, url):
         fields["name"] = yaml_data.get("name")
         fields["version"] = yaml_data.get("version", "Unknown")
         fields["url"] = url
+        fields["updated"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
+        fields["pubDate"] = email.utils.format_datetime(datetime.datetime.utcnow())
 
-        # Get the last commit date from GitHub API
-        last_commit_date = get_last_commit_date(url)
-        if last_commit_date:
-            fields["updated"] = last_commit_date  # Use commit date for "updated"
-            fields["pubDate"] = email.utils.format_datetime(parser.parse(last_commit_date))  # Format commit date for RSS pubDate
-        else:
-            # Use current UTC as fallback
-            fields["updated"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
-            fields["pubDate"] = email.utils.format_datetime(datetime.datetime.utcnow())
-            
     except (yaml.YAMLError, ValueError):
-        fields["id"] = None
+        fields["id"] = None  # Invalid YAML or parsing error
         return fields
 
-    last_updated_time = parser.parse(fields["updated"])  # Convert for comparison
-    seven_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
-    
-    if last_updated_time >= seven_days_ago:
-        return fields
-
-    return None  # Only return fields if updated in the last 7 days
+    return fields
 
 # Fetch URL function
 def fetch_url(url):
@@ -190,11 +152,9 @@ def fetch_url(url):
         print(f"Error fetching {url}: {e}")
         return url, None
 
-
 # Parallel fetching of URLs
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    future_to_url = {executor.submit(
-        fetch_url, url): url for url in github_file_urls}
+    future_to_url = {executor.submit(fetch_url, url): url for url in github_file_urls}
 
     all_entries = []
     removed_entries = []
@@ -212,8 +172,7 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
 
             if fields["id"] not in processed_versions or processed_versions.get(fields["id"])[0] != fields["version"]:
                 all_entries.append(fields)
-                processed_versions[fields["id"]] = [
-                    fields["version"], fields["updated"]]
+                processed_versions[fields["id"]] = [fields["version"], fields["updated"]]
         else:
             removed_entries.append(url)
 
@@ -240,10 +199,14 @@ if all_entries:
     etree.SubElement(
         item, "guid", isPermaLink="false").text = str(uuid.uuid4())
 
-    # Create a digest-style description
-    description_text = "Updated rules this week:\n"
+    # Create a digest-style description with bold name and hyperlinked link
+    description_text = "Updated rules this week:<br/>"
     for entry in all_entries:
-        description_text += f"Name: {entry['name']}\nID: {entry['id']}\nVersion: {entry['version']}\nUpdated: {entry['updated']}\nLink: {entry['url']}\n\n"
+        description_text += f"<b>Name:</b> {entry['name']}<br/>"
+        description_text += f"<b>ID:</b> {entry['id']}<br/>"
+        description_text += f"<b>Version:</b> {entry['version']}<br/>"
+        description_text += f"<b>Updated:</b> {entry['updated']}<br/>"
+        description_text += f"<b>Link:</b> <a href='{entry['url']}'>{entry['url']}</a><br/><br/>"
 
     etree.SubElement(item, "description").text = description_text
 

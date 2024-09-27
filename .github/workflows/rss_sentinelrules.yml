@@ -42,7 +42,6 @@ jobs:
       - name: Run GitHub YAML updates checker script
         env:
           GITHUB_ENV: .env
-          MY_GH_TOKEN: ${{ secrets.MY_GH_TOKEN }}
         run: |
           python rss_sentinelrules.py
 
