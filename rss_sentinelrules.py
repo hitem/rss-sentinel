@@ -5,6 +5,7 @@ import requests
 import yaml
 from lxml import etree
 import datetime
+from datetime import timezone
 import os
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
@@ -132,8 +133,8 @@ def extract_essential_fields(yaml_content, url):
         fields["name"] = yaml_data.get("name")
         fields["version"] = yaml_data.get("version", "Unknown")
         fields["url"] = url
-        fields["updated"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
-        fields["pubDate"] = email.utils.format_datetime(datetime.datetime.utcnow())
+        fields["updated"] = datetime.datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+        fields["pubDate"] = email.utils.format_datetime(datetime.datetime.now(timezone.utc))
 
     except (yaml.YAMLError, ValueError):
         fields["id"] = None  # Invalid YAML or parsing error
@@ -184,8 +185,8 @@ etree.SubElement(
     channel, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
 etree.SubElement(
     channel, "description").text = "A feed of updated YAML files from GitHub"
-etree.SubElement(channel, "lastBuildDate").text = datetime.datetime.utcnow(
-).strftime("%a, %d %b %Y %H:%M:%S GMT")
+etree.SubElement(channel, "lastBuildDate").text = datetime.datetime.now(
+    timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
 
 # Set the maximum number of rules per message
 MAX_RULES_PER_MESSAGE = 20
@@ -203,11 +204,11 @@ if all_entries:
         # Create a new XML item for each chunk of 20 rules
         item = etree.SubElement(channel, "item")
         etree.SubElement(
-            item, "title").text = f"Week {datetime.datetime.utcnow().isocalendar()[1]}: Updated Rules (Part {i+1})"
+            item, "title").text = f"Week {datetime.datetime.now(timezone.utc).isocalendar()[1]}: Updated Rules (Part {i+1})"
         etree.SubElement(
             item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
         etree.SubElement(item, "pubDate").text = email.utils.format_datetime(
-            datetime.datetime.utcnow())
+            datetime.datetime.now(timezone.utc))
         etree.SubElement(
             item, "guid", isPermaLink="false").text = str(uuid.uuid4())
         
@@ -224,11 +225,11 @@ if all_entries:
 if removed_entries or invalid_entries:
     removed_item = etree.SubElement(channel, "item")
     etree.SubElement(
-        removed_item, "title").text = f"Week {datetime.datetime.utcnow().isocalendar()[1]}: Removed or Invalid Rules"
+        removed_item, "title").text = f"Week {datetime.datetime.now(timezone.utc).isocalendar()[1]}: Removed or Invalid Rules"
     etree.SubElement(
         removed_item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
     etree.SubElement(removed_item, "pubDate").text = email.utils.format_datetime(
-        datetime.datetime.utcnow())
+        datetime.datetime.now(timezone.utc))
     etree.SubElement(
         removed_item, "guid", isPermaLink="false").text = str(uuid.uuid4())
 
@@ -255,7 +256,7 @@ with open(processed_versions_file, "w") as f:
 # Log invalid entries with missing 'id'
 with open(log_file, "a") as log:
     if invalid_entries:
-        log.write(f"{datetime.datetime.utcnow()} - Files with missing 'id':\n")
+        log.write(f"{datetime.datetime.now(timezone.utc)} - Files with missing 'id':\n")
         for url in invalid_entries:
             log.write(f"{url}\n")
 
