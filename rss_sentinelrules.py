@@ -1,4 +1,4 @@
-#hitem
+# hitem
 #!/usr/bin/env python3
 import concurrent.futures
 import requests
@@ -10,12 +10,15 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import json
 import email.utils
+from dateutil import parser
+import uuid
 
 # Set up retry strategy
 retry_strategy = Retry(
     total=3,
     backoff_factor=1,
-    status_forcelist=[429, 500, 502, 503, 504],  # Retry on common server errors
+    # Retry on common server errors
+    status_forcelist=[429, 500, 502, 503, 504],
 )
 adapter = HTTPAdapter(max_retries=retry_strategy)
 session = requests.Session()
@@ -95,7 +98,7 @@ github_file_urls = [
     # Add more URLs as needed
 ]
 
-#Output file for RSS feed
+# Output files
 output_file = "slimmed_down_feed.xml"
 processed_versions_file = "processed_versions.txt"
 log_file = "removed_or_moved_files.txt"
@@ -116,27 +119,33 @@ except FileNotFoundError:
     processed_versions = {}
 
 # Function to convert GitHub URL to raw URL
+
+
 def convert_to_raw_url(github_url):
     if "github.com" in github_url and "/blob/" in github_url:
-        raw_url = github_url.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/")
+        raw_url = github_url.replace(
+            "github.com", "raw.githubusercontent.com").replace("/blob/", "/")
         return raw_url
     return github_url  # If the URL is already in raw format or doesn't need conversion
 
+
 def get_last_commit_date(github_url):
     try:
-        api_url = github_url.replace("https://github.com/", "https://api.github.com/repos/").replace("/blob/", "/commits?path=")
+        api_url = github_url.replace(
+            "https://github.com/", "https://api.github.com/repos/").replace("/blob/", "/commits?path=")
         headers = {"Authorization": f"token {os.getenv('MY_GH_TOKEN')}"}
         response = session.get(api_url, headers=headers)
         response.raise_for_status()  # Will raise an exception for 4XX/5XX errors
-        commits = response.json()  # json() method is more robust
+        commits = response.json()
         if commits:
             return commits[0]['commit']['committer']['date']
     except requests.exceptions.RequestException as e:
         print(f"Error fetching commit date for {github_url}: {e}")
     return None
 
+# Function to extract essential fields from the YAML content
 
-# Function to extract only the required fields from the YAML content using pyyaml
+
 def extract_essential_fields(yaml_content, url):
     fields = {}
     try:
@@ -146,25 +155,28 @@ def extract_essential_fields(yaml_content, url):
         fields["version"] = yaml_data.get("version", "Unknown")
         fields["url"] = url
 
-        # Get the last commit date from GitHub API
         last_commit_date = get_last_commit_date(url)
         if last_commit_date:
             fields["updated"] = last_commit_date
+            last_updated_time = parser.parse(last_commit_date)  # Parse date
         else:
-            fields["updated"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
-            
-        # Convert the `updated` field to a datetime object for comparison
-        last_updated_time = datetime.datetime.strptime(fields["updated"], "%Y-%m-%dT%H:%M:%S")
-    except yaml.YAMLError:
-        fields["id"] = None  # Invalid YAML
+            fields["updated"] = datetime.datetime.utcnow().strftime(
+                "%Y-%m-%dT%H:%M:%S")
+            last_updated_time = datetime.datetime.utcnow()
+
+    except (yaml.YAMLError, ValueError):
+        fields["id"] = None
         return fields
 
-    # Only return fields if they were updated in the last 7 days
+    # Only return fields if updated within the last 7 days
     seven_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
     if last_updated_time >= seven_days_ago:
         return fields
 
-    return None  # Return None if the rule is older than 7 days
+    return None
+
+# Fetch URL function
+
 
 def fetch_url(url):
     raw_url = convert_to_raw_url(url)
@@ -176,9 +188,11 @@ def fetch_url(url):
         print(f"Error fetching {url}: {e}")
         return url, None
 
+
 # Parallel fetching of URLs
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    future_to_url = {executor.submit(fetch_url, url): url for url in github_file_urls}
+    future_to_url = {executor.submit(
+        fetch_url, url): url for url in github_file_urls}
 
     all_entries = []
     removed_entries = []
@@ -196,7 +210,8 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
 
             if fields["id"] not in processed_versions or processed_versions.get(fields["id"])[0] != fields["version"]:
                 all_entries.append(fields)
-                processed_versions[fields["id"]] = [fields["version"], fields["updated"]]
+                processed_versions[fields["id"]] = [
+                    fields["version"], fields["updated"]]
         else:
             removed_entries.append(url)
 
@@ -204,35 +219,37 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
 root = etree.Element("rss", version="2.0")
 channel = etree.SubElement(root, "channel")
 etree.SubElement(channel, "title").text = "Slimmed Down GitHub YAML Updates"
-etree.SubElement(channel, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
-etree.SubElement(channel, "description").text = "A feed of updated YAML files from GitHub"
-etree.SubElement(channel, "lastBuildDate").text = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
+etree.SubElement(
+    channel, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
+etree.SubElement(
+    channel, "description").text = "A feed of updated YAML files from GitHub"
+etree.SubElement(channel, "lastBuildDate").text = datetime.datetime.utcnow(
+).strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-# Add entries to the RSS feed
-for entry in all_entries:
+# Combine all entries into a single digest item
+if all_entries:
     item = etree.SubElement(channel, "item")
-    etree.SubElement(item, "title").text = f"Updated Rule: {entry['name']}"
-    etree.SubElement(item, "link").text = entry["url"]
-    pub_date = email.utils.format_datetime(datetime.datetime.strptime(entry["updated"], "%Y-%m-%dT%H:%M:%S"))
-    etree.SubElement(item, "pubDate").text = pub_date
-    etree.SubElement(item, "guid", isPermaLink="false").text = entry["id"]
+    etree.SubElement(
+        item, "title").text = f"Week {datetime.datetime.utcnow().isocalendar()[1]}: New Rule Updates"
+    etree.SubElement(
+        item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
+    etree.SubElement(item, "pubDate").text = email.utils.format_datetime(
+        datetime.datetime.utcnow())
+    etree.SubElement(
+        item, "guid", isPermaLink="false").text = str(uuid.uuid4())
 
-    description_text = f"Name: {entry['name']}\nID: {entry['id']}\nVersion: {entry['version']}\nUpdated: {entry['updated']}"
+    # Create a digest-style description
+    description_text = "Updated rules this week:\n"
+    for entry in all_entries:
+        description_text += f"Name: {entry['name']}\nID: {entry['id']}\nVersion: {entry['version']}\nUpdated: {entry['updated']}\nLink: {entry['url']}\n\n"
+
     etree.SubElement(item, "description").text = description_text
-
-# Add removed entries to the RSS feed
-if removed_entries:
-    removed_section = etree.SubElement(channel, "item")
-    etree.SubElement(removed_section, "title").text = "Removed or Moved Files"
-    removed_description = etree.SubElement(removed_section, "description")
-    removed_list = "\n".join(removed_entries)
-    removed_description.text = f"The following files were removed or moved:\n{removed_list}"
 
 # Write the slimmed down feed to the output file
 with open(output_file, "wb") as f:
     f.write(etree.tostring(root, pretty_print=True))
 
-# Only keep the most recent version of each rule in processed_versions with last updated date
+# Only keep the most recent version of each rule in processed_versions
 with open(processed_versions_file, "w") as f:
     for rule_id, data in processed_versions.items():
         version, updated = data
