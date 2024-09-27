@@ -93,12 +93,12 @@ github_file_urls = [
     # Add more URLs as needed
 ]
 
-# Output file for RSS feed
+#Output file for RSS feed
 output_file = "slimmed_down_feed.xml"
 processed_versions_file = "processed_versions.txt"
-log_file = "removed_or_moved_files.txt"  # Log for missing files or fields
+log_file = "removed_or_moved_files.txt"
 
-# Read previously processed versions, handling cases where last_updated is missing
+# Read previously processed versions
 try:
     with open(processed_versions_file, "r") as f:
         processed_versions = {}
@@ -129,12 +129,24 @@ def extract_essential_fields(yaml_content, url):
         fields["id"] = yaml_data.get("id")
         fields["name"] = yaml_data.get("name")
         fields["version"] = yaml_data.get("version", "Unknown")
-        fields["updated"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
         fields["url"] = url
-    except yaml.YAMLError as exc:
-        fields["id"] = None  # Indicate invalid YAML
 
-    return fields
+        # Check if there is a 'lastUpdated' field in the YAML, otherwise use current time
+        fields["updated"] = yaml_data.get("lastUpdated", datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S"))
+        
+        # Now we convert the `updated` field to a datetime object for comparison
+        last_updated_time = datetime.datetime.strptime(fields["updated"], "%Y-%m-%dT%H:%M:%S")
+
+    except yaml.YAMLError:
+        fields["id"] = None  # Indicate invalid YAML
+        return None  # Return early if YAML is invalid
+
+    # Filter based on the last 7 days
+    seven_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
+    if last_updated_time >= seven_days_ago:
+        return fields  # Only return fields if they were updated in the last 7 days
+
+    return None  # Return None if the rule is older than 7 days
 
 # Fetch URL function
 def fetch_url(url):
@@ -159,7 +171,7 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
             yaml_content = response.text
             fields = extract_essential_fields(yaml_content, url)
 
-            if fields["id"] is None:
+            if fields is None:
                 invalid_entries.append(url)
                 continue
 
