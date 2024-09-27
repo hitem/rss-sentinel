@@ -131,6 +131,7 @@ def convert_to_raw_url(github_url):
 
 def get_last_commit_date(github_url):
     try:
+        # Convert the GitHub URL to the GitHub API URL
         api_url = github_url.replace(
             "https://github.com/", "https://api.github.com/repos/").replace("/blob/", "/commits?path=")
         headers = {"Authorization": f"token {os.getenv('MY_GH_TOKEN')}"}
@@ -138,12 +139,13 @@ def get_last_commit_date(github_url):
         response.raise_for_status()  # Will raise an exception for 4XX/5XX errors
         commits = response.json()
         if commits:
+            # Get the commit date from the first (most recent) commit
             return commits[0]['commit']['committer']['date']
     except requests.exceptions.RequestException as e:
         print(f"Error fetching commit date for {github_url}: {e}")
     return None
 
-# Function to extract essential fields from the YAML content
+# Function to extract only the required fields from the YAML content using PyYAML
 
 
 def extract_essential_fields(yaml_content, url):
@@ -155,29 +157,29 @@ def extract_essential_fields(yaml_content, url):
         fields["version"] = yaml_data.get("version", "Unknown")
         fields["url"] = url
 
+        # Get the last commit date from GitHub API
         last_commit_date = get_last_commit_date(url)
         if last_commit_date:
-            fields["updated"] = last_commit_date
-            last_updated_time = parser.parse(last_commit_date)  # Parse date
+            fields["updated"] = last_commit_date  # Use commit date for "updated"
+            fields["pubDate"] = email.utils.format_datetime(parser.parse(last_commit_date))  # Format commit date for RSS pubDate
         else:
-            fields["updated"] = datetime.datetime.utcnow().strftime(
-                "%Y-%m-%dT%H:%M:%S")
-            last_updated_time = datetime.datetime.utcnow()
-
+            # Use current UTC as fallback
+            fields["updated"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
+            fields["pubDate"] = email.utils.format_datetime(datetime.datetime.utcnow())
+            
     except (yaml.YAMLError, ValueError):
         fields["id"] = None
         return fields
 
-    # Only return fields if updated within the last 7 days
+    last_updated_time = parser.parse(fields["updated"])  # Convert for comparison
     seven_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
+    
     if last_updated_time >= seven_days_ago:
         return fields
 
-    return None
+    return None  # Only return fields if updated in the last 7 days
 
 # Fetch URL function
-
-
 def fetch_url(url):
     raw_url = convert_to_raw_url(url)
     try:
