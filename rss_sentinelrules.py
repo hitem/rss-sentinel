@@ -187,25 +187,38 @@ etree.SubElement(
 etree.SubElement(channel, "lastBuildDate").text = datetime.datetime.utcnow(
 ).strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-# Combine all updated entries into a single digest item
+# Set the maximum number of rules per message
+MAX_RULES_PER_MESSAGE = 20
+
+# Function to split the list into chunks of a specific size
+def chunk_list(lst, n):
+    for i in range(0, len(lst), n):
+        yield lst[i:i+n]
+
+# If there are any updated rules, process them in chunks
 if all_entries:
-    updated_item = etree.SubElement(channel, "item")
-    etree.SubElement(
-        updated_item, "title").text = f"Week {datetime.datetime.utcnow().isocalendar()[1]}: Updated Rules"
-    etree.SubElement(
-        updated_item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
-    etree.SubElement(updated_item, "pubDate").text = email.utils.format_datetime(
-        datetime.datetime.utcnow())
-    etree.SubElement(
-        updated_item, "guid", isPermaLink="false").text = str(uuid.uuid4())
-
-    # Create a description with Name, ID, and hyperlinked ID
-    updated_description_text = "Updated rules this week:<br/>"
-    for entry in all_entries:
-        updated_description_text += f"Name: {entry['name']} (Version: {entry['version']})<br/>"
-        updated_description_text += f"ID: <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
-
-    etree.SubElement(updated_item, "description").text = updated_description_text
+    chunks = list(chunk_list(all_entries, MAX_RULES_PER_MESSAGE))
+    
+    for i, chunk in enumerate(chunks):
+        # Create a new XML item for each chunk of 20 rules
+        item = etree.SubElement(channel, "item")
+        etree.SubElement(
+            item, "title").text = f"Week {datetime.datetime.utcnow().isocalendar()[1]}: Updated Rules (Part {i+1})"
+        etree.SubElement(
+            item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
+        etree.SubElement(item, "pubDate").text = email.utils.format_datetime(
+            datetime.datetime.utcnow())
+        etree.SubElement(
+            item, "guid", isPermaLink="false").text = str(uuid.uuid4())
+        
+        # Build description for this chunk
+        description_text = "Updated rules this week:<br/>"
+        for entry in chunk:
+            description_text += f"<b>Name:</b> {entry['name']}<br/>"
+            description_text += f"<b>ID:</b> <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
+        
+        # Add the description to the item
+        etree.SubElement(item, "description").text = description_text
 
 # Separate section for removed or invalid entries
 if removed_entries or invalid_entries:
