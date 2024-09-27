@@ -228,8 +228,8 @@ if all_entries:
         # Build description for this chunk
         description_text = "Updated rules this week:<br/>"
         for entry in chunk:
-            description_text += f"<b>Name:</b> {entry['name']} (Version: {entry['version']})<br/>"
-            description_text += f"<b>ID:</b> <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
+            description_text += f"<b>Name:</b> {entry['name']} ({entry['version']})<br/>"
+            description_text += f"<b>alertRuleTemplateName:</b> <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
 
         # Add the description to the item
         etree.SubElement(item, "description").text = description_text
