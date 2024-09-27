@@ -16,7 +16,8 @@ import uuid
 retry_strategy = Retry(
     total=3,
     backoff_factor=1,
-    status_forcelist=[429, 500, 502, 503, 504],  # Retry on common server errors
+    # Retry on common server errors
+    status_forcelist=[429, 500, 502, 503, 504],
 )
 adapter = HTTPAdapter(max_retries=retry_strategy)
 session = requests.Session()
@@ -117,6 +118,8 @@ except FileNotFoundError:
     processed_versions = {}
 
 # Function to convert GitHub URL to raw URL
+
+
 def convert_to_raw_url(github_url):
     if "github.com" in github_url and "/blob/" in github_url:
         raw_url = github_url.replace(
@@ -125,6 +128,8 @@ def convert_to_raw_url(github_url):
     return github_url  # If the URL is already in raw format or doesn't need conversion
 
 # Function to extract only the required fields from the YAML content using PyYAML
+
+
 def extract_essential_fields(yaml_content, url):
     fields = {}
     try:
@@ -133,8 +138,10 @@ def extract_essential_fields(yaml_content, url):
         fields["name"] = yaml_data.get("name")
         fields["version"] = yaml_data.get("version", "Unknown")
         fields["url"] = url
-        fields["updated"] = datetime.datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
-        fields["pubDate"] = email.utils.format_datetime(datetime.datetime.now(timezone.utc))
+        fields["updated"] = datetime.datetime.now(
+            timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+        fields["pubDate"] = email.utils.format_datetime(
+            datetime.datetime.now(timezone.utc))
 
     except (yaml.YAMLError, ValueError):
         fields["id"] = None  # Invalid YAML or parsing error
@@ -143,6 +150,8 @@ def extract_essential_fields(yaml_content, url):
     return fields
 
 # Fetch URL function
+
+
 def fetch_url(url):
     raw_url = convert_to_raw_url(url)
     try:
@@ -153,9 +162,11 @@ def fetch_url(url):
         print(f"Error fetching {url}: {e}")
         return url, None
 
+
 # Parallel fetching of URLs
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    future_to_url = {executor.submit(fetch_url, url): url for url in github_file_urls}
+    future_to_url = {executor.submit(
+        fetch_url, url): url for url in github_file_urls}
 
     all_entries = []
     removed_entries = []
@@ -173,7 +184,8 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
 
             if fields["id"] not in processed_versions or processed_versions.get(fields["id"])[0] != fields["version"]:
                 all_entries.append(fields)
-                processed_versions[fields["id"]] = [fields["version"], fields["updated"]]
+                processed_versions[fields["id"]] = [
+                    fields["version"], fields["updated"]]
         else:
             removed_entries.append(url)
 
@@ -189,7 +201,7 @@ etree.SubElement(channel, "lastBuildDate").text = datetime.datetime.now(
     timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
 
 # Set the maximum number of rules per message
-MAX_RULES_PER_MESSAGE = 20
+MAX_RULES_PER_MESSAGE = 50
 
 # Function to split the list into chunks of a specific size
 def chunk_list(lst, n):
@@ -206,20 +218,20 @@ if all_entries:
         part_number = i + 1  # Part number starts from 1
         item = etree.SubElement(channel, "item")
         etree.SubElement(
-            item, "title").text = f"Week {datetime.datetime.utcnow().isocalendar()[1]}: Updated Rules (Part {part_number}/{total_parts})"
+            item, "title").text = f"{datetime.datetime.utcnow().strftime('%B')} {datetime.datetime.utcnow().year}: Updated Rules(Part {i+1}/{len(chunks)})"
         etree.SubElement(
             item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
         etree.SubElement(item, "pubDate").text = email.utils.format_datetime(
             datetime.datetime.utcnow())
         etree.SubElement(
             item, "guid", isPermaLink="false").text = str(uuid.uuid4())
-        
+
         # Build description for this chunk
         description_text = "Updated rules this week:<br/>"
         for entry in chunk:
             description_text += f"<b>Name:</b> {entry['name']} (Version: {entry['version']})<br/>"
             description_text += f"<b>ID:</b> <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
-        
+
         # Add the description to the item
         etree.SubElement(item, "description").text = description_text
 
@@ -243,7 +255,8 @@ if removed_entries or invalid_entries:
     for url in invalid_entries:
         removed_description_text += f"<b>Link:</b> <a href='{url}'>{url}</a> (Missing 'id')<br/><br/>"
 
-    etree.SubElement(removed_item, "description").text = removed_description_text
+    etree.SubElement(
+        removed_item, "description").text = removed_description_text
 
 # Write the slimmed down feed to the output file
 with open(output_file, "wb") as f:
@@ -258,7 +271,8 @@ with open(processed_versions_file, "w") as f:
 # Log invalid entries with missing 'id'
 with open(log_file, "a") as log:
     if invalid_entries:
-        log.write(f"{datetime.datetime.now(timezone.utc)} - Files with missing 'id':\n")
+        log.write(
+            f"{datetime.datetime.now(timezone.utc)} - Files with missing 'id':\n")
         for url in invalid_entries:
             log.write(f"{url}\n")
 
