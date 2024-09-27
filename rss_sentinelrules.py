@@ -8,6 +8,8 @@ import datetime
 import os
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+import json
+import email.utils
 
 # Set up retry strategy
 retry_strategy = Retry(
@@ -120,10 +122,23 @@ def convert_to_raw_url(github_url):
         return raw_url
     return github_url  # If the URL is already in raw format or doesn't need conversion
 
+def get_last_commit_date(github_url):
+    try:
+        api_url = github_url.replace("https://github.com/", "https://api.github.com/repos/").replace("/blob/", "/commits?path=")
+        headers = {"Authorization": f"token {os.getenv('MY_GH_TOKEN')}"}
+        response = session.get(api_url, headers=headers)
+        response.raise_for_status()  # Will raise an exception for 4XX/5XX errors
+        commits = response.json()  # json() method is more robust
+        if commits:
+            return commits[0]['commit']['committer']['date']
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching commit date for {github_url}: {e}")
+    return None
+
+
 # Function to extract only the required fields from the YAML content using pyyaml
 def extract_essential_fields(yaml_content, url):
     fields = {}
-
     try:
         yaml_data = yaml.safe_load(yaml_content)
         fields["id"] = yaml_data.get("id")
@@ -131,31 +146,35 @@ def extract_essential_fields(yaml_content, url):
         fields["version"] = yaml_data.get("version", "Unknown")
         fields["url"] = url
 
-        # Check if there is a 'lastUpdated' field in the YAML, otherwise use current time
-        fields["updated"] = yaml_data.get("lastUpdated", datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S"))
-        
-        # Now we convert the `updated` field to a datetime object for comparison
+        # Get the last commit date from GitHub API
+        last_commit_date = get_last_commit_date(url)
+        if last_commit_date:
+            fields["updated"] = last_commit_date
+        else:
+            fields["updated"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
+            
+        # Convert the `updated` field to a datetime object for comparison
         last_updated_time = datetime.datetime.strptime(fields["updated"], "%Y-%m-%dT%H:%M:%S")
-
     except yaml.YAMLError:
-        fields["id"] = None  # Indicate invalid YAML
-        return None  # Return early if YAML is invalid
+        fields["id"] = None  # Invalid YAML
+        return fields
 
-    # Filter based on the last 7 days
+    # Only return fields if they were updated in the last 7 days
     seven_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
     if last_updated_time >= seven_days_ago:
-        return fields  # Only return fields if they were updated in the last 7 days
+        return fields
 
     return None  # Return None if the rule is older than 7 days
 
-# Fetch URL function
 def fetch_url(url):
     raw_url = convert_to_raw_url(url)
-    response = session.get(raw_url)
-    if response.status_code == 200:
+    try:
+        response = session.get(raw_url)
+        response.raise_for_status()  # Will raise an exception for 4XX/5XX errors
         return url, response
-    else:
-        return url, None  # Handle errors like 404 or 500
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching {url}: {e}")
+        return url, None
 
 # Parallel fetching of URLs
 with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -194,7 +213,8 @@ for entry in all_entries:
     item = etree.SubElement(channel, "item")
     etree.SubElement(item, "title").text = f"Updated Rule: {entry['name']}"
     etree.SubElement(item, "link").text = entry["url"]
-    etree.SubElement(item, "pubDate").text = entry["updated"]
+    pub_date = email.utils.format_datetime(datetime.datetime.strptime(entry["updated"], "%Y-%m-%dT%H:%M:%S"))
+    etree.SubElement(item, "pubDate").text = pub_date
     etree.SubElement(item, "guid", isPermaLink="false").text = entry["id"]
 
     description_text = f"Name: {entry['name']}\nID: {entry['id']}\nVersion: {entry['version']}\nUpdated: {entry['updated']}"
