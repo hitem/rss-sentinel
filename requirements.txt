@@ -1,4 +1,4 @@
 requests
 PyYAML
 lxml
-dateutil
+python-dateutil
