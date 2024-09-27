@@ -187,28 +187,47 @@ etree.SubElement(
 etree.SubElement(channel, "lastBuildDate").text = datetime.datetime.utcnow(
 ).strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-# Combine all entries into a single digest item
+# Combine all updated entries into a single digest item
 if all_entries:
-    item = etree.SubElement(channel, "item")
+    updated_item = etree.SubElement(channel, "item")
     etree.SubElement(
-        item, "title").text = f"Week {datetime.datetime.utcnow().isocalendar()[1]}: New Rule Updates"
+        updated_item, "title").text = f"Week {datetime.datetime.utcnow().isocalendar()[1]}: Updated Rules"
     etree.SubElement(
-        item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
-    etree.SubElement(item, "pubDate").text = email.utils.format_datetime(
+        updated_item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
+    etree.SubElement(updated_item, "pubDate").text = email.utils.format_datetime(
         datetime.datetime.utcnow())
     etree.SubElement(
-        item, "guid", isPermaLink="false").text = str(uuid.uuid4())
+        updated_item, "guid", isPermaLink="false").text = str(uuid.uuid4())
 
-    # Create a digest-style description with bold name and hyperlinked link
-    description_text = "Updated rules this week:<br/>"
+    # Create a description with Name, ID, and hyperlinked ID
+    updated_description_text = "Updated rules this week:<br/>"
     for entry in all_entries:
-        description_text += f"<b>Name:</b> {entry['name']}<br/>"
-        description_text += f"<b>ID:</b> {entry['id']}<br/>"
-        description_text += f"<b>Version:</b> {entry['version']}<br/>"
-        description_text += f"<b>Updated:</b> {entry['updated']}<br/>"
-        description_text += f"<b>Link:</b> <a href='{entry['url']}'>{entry['url']}</a><br/><br/>"
+        updated_description_text += f"Name: {entry['name']} (Version: {entry['version']})<br/>"
+        updated_description_text += f"ID: <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
 
-    etree.SubElement(item, "description").text = description_text
+    etree.SubElement(updated_item, "description").text = updated_description_text
+
+# Separate section for removed or invalid entries
+if removed_entries or invalid_entries:
+    removed_item = etree.SubElement(channel, "item")
+    etree.SubElement(
+        removed_item, "title").text = f"Week {datetime.datetime.utcnow().isocalendar()[1]}: Removed or Invalid Rules"
+    etree.SubElement(
+        removed_item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
+    etree.SubElement(removed_item, "pubDate").text = email.utils.format_datetime(
+        datetime.datetime.utcnow())
+    etree.SubElement(
+        removed_item, "guid", isPermaLink="false").text = str(uuid.uuid4())
+
+    # Create a digest-style description for removed/invalid rules
+    removed_description_text = "Removed or invalid rules:<br/>"
+    for url in removed_entries:
+        removed_description_text += f"<b>Link:</b> <a href='{url}'>{url}</a><br/><br/>"
+
+    for url in invalid_entries:
+        removed_description_text += f"<b>Link:</b> <a href='{url}'>{url}</a> (Missing 'id')<br/><br/>"
+
+    etree.SubElement(removed_item, "description").text = removed_description_text
 
 # Write the slimmed down feed to the output file
 with open(output_file, "wb") as f:
