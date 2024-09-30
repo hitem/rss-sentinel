@@ -249,7 +249,7 @@ if all_entries:
         etree.SubElement(item, "guid", isPermaLink="false").text = str(uuid.uuid4())
 
         # Build description for this chunk
-        description_text = "Updated rules this week:<br/>"
+        description_text = f"Updated rules for {previous_month_name} {previous_month_year}:<br/>"
         for entry in chunk:
             description_text += f"<b>Name:</b> {entry['name']} ({entry['version']})<br/>"
             description_text += f"<b>ID:</b> <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
@@ -260,12 +260,12 @@ if all_entries:
 # Separate section for removed or invalid entries
 if removed_entries or invalid_entries:
     removed_item = etree.SubElement(channel, "item")
-    etree.SubElement(removed_item, "title").text = f"Week {datetime.datetime.now(timezone.utc).isocalendar()[1]}: Removed or Invalid Rules"
+    etree.SubElement(removed_item, "title").text = f"{previous_month_name} {previous_month_year}: Removed or Invalid Rules"
     etree.SubElement(removed_item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
     etree.SubElement(removed_item, "pubDate").text = email.utils.format_datetime(datetime.datetime.now(timezone.utc))
     etree.SubElement(removed_item, "guid", isPermaLink="false").text = str(uuid.uuid4())
 
-    removed_description_text = "Removed or invalid rules:<br/>"
+    removed_description_text = f"Removed or invalid rules for {previous_month_name} {previous_month_year}:<br/>"
     for url in removed_entries:
         removed_description_text += f"<b>Link:</b> <a href='{url}'>{url}</a><br/><br/>"
 
