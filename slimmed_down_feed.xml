@@ -3,13 +3,13 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Mon, 30 Sep 2024 13:52:58 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 30 Sep 2024 14:16:47 GMT</lastBuildDate>
     <item>
-      <title>August 2024: Updated Rules (Part 1/1)</title>
+      <title>Week 40: Removed or Invalid Rules</title>
       <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
-      <pubDate>Mon, 30 Sep 2024 13:52:58 +0000</pubDate>
-      <guid isPermaLink="false">12b82c25-83cd-40ad-97cd-b4e51e364cb5</guid>
-      <description>Updated rules this week:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Abnormal Deny Rate for Source IP (1.1.2)&lt;br/&gt;&lt;b&gt;alertRuleTemplateName:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20Firewall/Analytic%20Rules/Azure%20Firewall%20-%20Abnormal%20Deny%20Rate%20for%20Source%20IP.yaml'&gt;d36bb1e3-5abc-4037-ad9a-24ba3469819e&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Privileged Accounts - Sign in Failure Spikes (1.1.1)&lt;br/&gt;&lt;b&gt;alertRuleTemplateName:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Microsoft%20Entra%20ID/Analytic%20Rules/PrivilegedAccountsSigninFailureSpikes.yaml'&gt;34c5aff9-a8c2-4601-9654-c7e46342d03b&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; RDP Nesting (1.2.8)&lt;br/&gt;&lt;b&gt;alertRuleTemplateName:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Detections/SecurityEvent/RDP_Nesting.yaml'&gt;69a45b05-71f5-45ca-8944-2e038747fb39&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
+      <pubDate>Mon, 30 Sep 2024 14:16:47 +0000</pubDate>
+      <guid isPermaLink="false">63304f05-0d8a-4b47-92a0-c401e0711e2b</guid>
+      <description>Removed or invalid rules:&lt;br/&gt;&lt;b&gt;Link:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence/Analytic%20Rules/TESTREMOVAL.yaml'&gt;https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence/Analytic%20Rules/TESTREMOVAL.yaml&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
     </item>
   </channel>
 </rss>
