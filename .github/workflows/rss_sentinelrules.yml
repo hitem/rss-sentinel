@@ -2,7 +2,7 @@ name: Sentinel GitHub YAML Updates Checker
 
 on:
   schedule:
-    - cron: '0 1 1 * *'  # This will run the job at 01:00 (UTC) on the 1st of every month
+    - cron: '1 0 1 * *'  # This will run the job at 00:01 UTC on the 1st of every month, which is 1:01 AM CET
   workflow_dispatch: # Allow manual triggering
 
 jobs:
