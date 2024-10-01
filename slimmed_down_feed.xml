@@ -3,13 +3,6 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Mon, 30 Sep 2024 14:16:47 GMT</lastBuildDate>
-    <item>
-      <title>Week 40: Removed or Invalid Rules</title>
-      <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
-      <pubDate>Mon, 30 Sep 2024 14:16:47 +0000</pubDate>
-      <guid isPermaLink="false">63304f05-0d8a-4b47-92a0-c401e0711e2b</guid>
-      <description>Removed or invalid rules:&lt;br/&gt;&lt;b&gt;Link:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence/Analytic%20Rules/TESTREMOVAL.yaml'&gt;https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence/Analytic%20Rules/TESTREMOVAL.yaml&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
-    </item>
+    <lastBuildDate>Tue, 01 Oct 2024 02:24:03 GMT</lastBuildDate>
   </channel>
 </rss>
