@@ -47,7 +47,6 @@ github_file_urls = [
     "https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20Key%20Vault/Analytic%20Rules/KeyvaultMassSecretRetrieval.yaml",
     "https://github.com/Azure/Azure-Sentinel/blob/master/Detections/MultipleDataSources/Mercury_Log4j_August2022.yaml",
     "https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Microsoft%20Entra%20ID/Analytic%20Rules/MFARejectedbyUser.yaml",
-    "https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Microsoft%20Entra%20ID/Analytic%20Rules/MFARejectedbyUser.yaml",
     "https://github.com/Azure/Azure-Sentinel/blob/master/Detections/SecurityEvent/AADHealthSvcAgentRegKeyAccess.yaml",
     "https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Cloud%20Identity%20Threat%20Protection%20Essentials/Analytic%20Rules/NewExtUserGrantedAdmin.yaml",
     "https://github.com/Azure/Azure-Sentinel/blob/master/Detections/SecurityEvent/UserCreatedAddedToBuiltinAdmins_1d.yaml",
@@ -120,37 +119,42 @@ try:
         processed_versions = {}
         for line in f:
             parts = line.strip().split()
-            if len(parts) == 3:  # Full entry with rule_id, version, and last_updated
-                rule_id, version, last_updated = parts
-            elif len(parts) == 2:  # Missing last_updated, set it to "Unknown"
-                rule_id, version = parts
-                last_updated = "Unknown"
-            processed_versions[rule_id] = [version, last_updated]
+            if len(parts) >= 2:
+                rule_id = parts[0]
+                version = parts[1]
+                last_updated = parts[2] if len(parts) == 3 else "Unknown"
+                processed_versions[rule_id] = [version, last_updated]
 except FileNotFoundError:
     processed_versions = {}
 
 # Function to convert GitHub URL to raw URL
 def convert_to_raw_url(github_url):
     if "github.com" in github_url and "/blob/" in github_url:
-        raw_url = github_url.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/")
+        raw_url = github_url.replace(
+            "github.com", "raw.githubusercontent.com").replace("/blob/", "/")
         return raw_url
-    return github_url  # If the URL is already in raw format or doesn't need conversion
+    return github_url
 
-# Function to extract only the required fields from the YAML content using PyYAML
+# Function to extract only the required fields from the YAML content
+
+
 def extract_essential_fields(yaml_content, url):
-    fields = {}
     try:
         yaml_data = yaml.safe_load(yaml_content)
-        fields["id"] = yaml_data.get("id")
-        fields["name"] = yaml_data.get("name")
-        fields["version"] = yaml_data.get("version", "Unknown")
-        fields["url"] = url
-        fields["updated"] = datetime.datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
-        fields["pubDate"] = email.utils.format_datetime(datetime.datetime.now(timezone.utc))
-    except (yaml.YAMLError, ValueError):
-        fields["id"] = None  # Invalid YAML or parsing error
+        rule_id = yaml_data.get("id")
+        if not rule_id:
+            return None
+        fields = {
+            "id": rule_id,
+            "name": yaml_data.get("name"),
+            "version": yaml_data.get("version", "Unknown"),
+            "url": url,
+            "updated": datetime.datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
+            "pubDate": email.utils.format_datetime(datetime.datetime.now(timezone.utc)),
+        }
         return fields
-    return fields
+    except (yaml.YAMLError, ValueError):
+        return None 
 
 # Function to remove the failed URLs from the 'github_file_urls' in the source file
 def remove_url_from_list(url):
@@ -182,7 +186,8 @@ def remove_url_from_list(url):
 
         # Log the removal
         with open(log_file, "a") as log:
-            log.write(f"{datetime.datetime.now(timezone.utc)} - URL Removed: {url}\n")
+            log.write(
+                f"{datetime.datetime.now(timezone.utc)} - URL Removed: {url}\n")
     except Exception as e:
         print(f"Error while removing URL {url}: {e}")
 
@@ -191,7 +196,7 @@ def fetch_url(url):
     raw_url = convert_to_raw_url(url)
     try:
         response = session.get(raw_url)
-        response.raise_for_status()  # Will raise an exception for 4XX/5XX errors
+        response.raise_for_status()  
         return url, response
     except requests.exceptions.RequestException as e:
         print(f"Error fetching {url}: {e}")
@@ -199,9 +204,11 @@ def fetch_url(url):
 
 # Parallel fetching of URLs
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    future_to_url = {executor.submit(fetch_url, url): url for url in github_file_urls}
+    future_to_url = {executor.submit(
+        fetch_url, url): url for url in github_file_urls}
 
-    all_entries = []
+    new_entries = []
+    updated_entries = []
     removed_entries = []
     invalid_entries = []
 
@@ -215,12 +222,22 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
                 invalid_entries.append(url)
                 continue
 
-            if fields["id"] not in processed_versions or processed_versions.get(fields["id"])[0] != fields["version"]:
-                all_entries.append(fields)
-                processed_versions[fields["id"]] = [fields["version"], fields["updated"]]
+            rule_id = fields["id"]
+            rule_version = fields["version"]
+            # Check if the rule is new or updated
+            if rule_id not in processed_versions:
+                # New entry
+                new_entries.append(fields)
+                processed_versions[rule_id] = [rule_version, fields["updated"]]
+            elif processed_versions.get(rule_id)[0] != rule_version:
+                # Updated entry
+                updated_entries.append(fields)
+                processed_versions[rule_id] = [rule_version, fields["updated"]]
+            else:
+                # No change
+                pass 
         else:
             removed_entries.append(url)
-            # Remove the URL from the list if it fails twice
             remove_url_from_list(url)
 
 # Get the previous month
@@ -233,62 +250,63 @@ previous_month_name = calendar.month_name[previous_month]
 root = etree.Element("rss", version="2.0")
 channel = etree.SubElement(root, "channel")
 etree.SubElement(channel, "title").text = "Slimmed Down GitHub YAML Updates"
-etree.SubElement(channel, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
-etree.SubElement(channel, "description").text = "A feed of updated YAML files from GitHub"
-etree.SubElement(channel, "lastBuildDate").text = datetime.datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
+etree.SubElement(
+    channel, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
+etree.SubElement(
+    channel, "description").text = "A feed of updated YAML files from GitHub"
+etree.SubElement(channel, "lastBuildDate").text = datetime.datetime.now(
+    timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-# Set the maximum number of rules per message
-MAX_RULES_PER_MESSAGE = 100
+# Function to add items to RSS channel
+def add_rss_item(title, description_text, channel):
+    item = etree.SubElement(channel, "item")
+    etree.SubElement(item, "title").text = title
+    etree.SubElement(
+        item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
+    etree.SubElement(item, "pubDate").text = email.utils.format_datetime(
+        datetime.datetime.now(timezone.utc))
+    etree.SubElement(
+        item, "guid", isPermaLink="false").text = str(uuid.uuid4())
+    etree.SubElement(item, "description").text = description_text
 
-# Function to split the list into chunks of a specific size
-def chunk_list(lst, n):
-    for i in range(0, len(lst), n):
-        yield lst[i:i+n]
 
-# If there are any updated rules, process them in chunks
-if all_entries:
-    chunks = list(chunk_list(all_entries, MAX_RULES_PER_MESSAGE))
-    total_parts = len(chunks)  # Calculate total number of parts
+# Add New, Updated, and Removed rules as separate entries
+if new_entries:
+    new_description = "New rules:<br/>" + "".join(
+        f"<b>Name:</b> {entry['name']} ({entry['version']})<br/><b>ID:</b> <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
+        for entry in new_entries
+    )
+    add_rss_item(
+        f"{previous_month_name} {previous_month_year}: New Rules", new_description, channel)
 
-    for i, chunk in enumerate(chunks):
-        part_number = i + 1  # Part number starts from 1
-        item = etree.SubElement(channel, "item")
-        etree.SubElement(item, "title").text = f"{previous_month_name} {previous_month_year}: Updated Rules (Part {part_number}/{total_parts})"
-        etree.SubElement(item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
-        etree.SubElement(item, "pubDate").text = email.utils.format_datetime(datetime.datetime.now(timezone.utc))
-        etree.SubElement(item, "guid", isPermaLink="false").text = str(uuid.uuid4())
+if updated_entries:
+    updated_description = "Updated rules:<br/>" + "".join(
+        f"<b>Name:</b> {entry['name']} ({entry['version']})<br/><b>ID:</b> <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
+        for entry in updated_entries
+    )
+    add_rss_item(f"{previous_month_name} {previous_month_year}: Updated Rules",
+                 updated_description, channel)
 
-        # Build description for this chunk
-        description_text = f"Updated rules for {previous_month_name} {previous_month_year}:<br/>"
-        for entry in chunk:
-            description_text += f"<b>Name:</b> {entry['name']} ({entry['version']})<br/>"
-            description_text += f"<b>ID:</b> <a href='{entry['url']}'>{entry['id']}</a><br/><br/>"
-
-        # Add the description to the item
-        etree.SubElement(item, "description").text = description_text
-
-# Separate section for removed or invalid entries
 if removed_entries or invalid_entries:
-    removed_item = etree.SubElement(channel, "item")
-    etree.SubElement(removed_item, "title").text = f"{previous_month_name} {previous_month_year}: Removed or Invalid Rules"
-    etree.SubElement(removed_item, "link").text = "https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml"
-    etree.SubElement(removed_item, "pubDate").text = email.utils.format_datetime(datetime.datetime.now(timezone.utc))
-    etree.SubElement(removed_item, "guid", isPermaLink="false").text = str(uuid.uuid4())
-
-    removed_description_text = f"Removed or invalid rules for {previous_month_name} {previous_month_year}:<br/>"
-    for url in removed_entries:
-        removed_description_text += f"<b>Link:</b> <a href='{url}'>{url}</a><br/><br/>"
-
-    for url in invalid_entries:
-        removed_description_text += f"<b>Link:</b> <a href='{url}'>{url}</a> (Missing 'id')<br/><br/>"
-
-    etree.SubElement(removed_item, "description").text = removed_description_text
+    removed_description = ""
+    if removed_entries:
+        removed_description += "Removed rules:<br/>" + "".join(
+            f"<b>Link:</b> <a href='{url}'>{url}</a><br/><br/>"
+            for url in removed_entries
+        )
+    if invalid_entries:
+        removed_description += "Invalid rules (missing 'id'):<br/>" + "".join(
+            f"<b>Link:</b> <a href='{url}'>{url}</a><br/><br/>"
+            for url in invalid_entries
+        )
+    add_rss_item(f"{previous_month_name} {previous_month_year}: Removed or Invalid Rules",
+                 removed_description, channel)
 
 # Write the slimmed down feed to the output file
 with open(output_file, "wb") as f:
     f.write(etree.tostring(root, pretty_print=True))
 
-# Only keep the most recent version of each rule in processed_versions
+# Update the processed_versions.txt file to keep the latest version information
 with open(processed_versions_file, "w") as f:
     for rule_id, data in processed_versions.items():
         version, updated = data
@@ -297,10 +315,11 @@ with open(processed_versions_file, "w") as f:
 # Log invalid entries with missing 'id'
 with open(log_file, "a") as log:
     if invalid_entries:
-        log.write(f"{datetime.datetime.now(timezone.utc)} - Files with missing 'id':\n")
+        log.write(
+            f"{datetime.datetime.now(timezone.utc)} - Files with missing 'id':\n")
         for url in invalid_entries:
             log.write(f"{url}\n")
 
 # Set the RSS_FEED_ENTRIES environment variable
 with open(os.environ["GITHUB_ENV"], "a") as f:
-    f.write(f"RSS_FEED_ENTRIES={len(all_entries)}\n")
+    f.write(f"RSS_FEED_ENTRIES={len(new_entries) + len(updated_entries)}\n")
