@@ -3,13 +3,6 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Wed, 01 Jan 2025 01:14:51 GMT</lastBuildDate>
-    <item>
-      <title>December 2024: Updated Rules</title>
-      <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
-      <pubDate>Wed, 01 Jan 2025 01:14:51 +0000</pubDate>
-      <guid isPermaLink="false">ce216db2-ed30-42da-bd27-80e2544d078d</guid>
-      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; MFA Rejected by User (2.0.4)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Microsoft%20Entra%20ID/Analytic%20Rules/MFARejectedbyUser.yaml'&gt;d99cf5c3-d660-436c-895b-8a8f8448da23&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
-    </item>
+    <lastBuildDate>Sat, 01 Feb 2025 01:11:28 GMT</lastBuildDate>
   </channel>
 </rss>
