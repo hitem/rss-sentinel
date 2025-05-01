@@ -3,6 +3,13 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Tue, 01 Apr 2025 01:22:52 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 01 May 2025 01:24:01 GMT</lastBuildDate>
+    <item>
+      <title>April 2025: Updated Rules</title>
+      <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
+      <pubDate>Thu, 01 May 2025 01:24:01 +0000</pubDate>
+      <guid isPermaLink="false">111e5328-17d2-4a8e-b2f5-59e5f1a9bd9f</guid>
+      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Distributed Password cracking attempts in Microsoft Entra ID (1.0.5)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Microsoft%20Entra%20ID/Analytic%20Rules/DistribPassCrackAttempt.yaml'&gt;bfb1c90f-8006-4325-98be-c7fffbc254d6&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; TI Map IP Entity to CommonSecurityLog (1.2.3)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence/Analytic%20Rules/IPEntity_CustomSecurityLog.yaml'&gt;66c81ae2-1f89-4433-be00-2fbbd9ba5ebe&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
+    </item>
   </channel>
 </rss>
