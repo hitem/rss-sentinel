@@ -3,13 +3,13 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Tue, 01 Jul 2025 01:40:25 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 01 Aug 2025 01:47:03 GMT</lastBuildDate>
     <item>
-      <title>June 2025: Updated Rules</title>
+      <title>July 2025: Updated Rules</title>
       <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
-      <pubDate>Tue, 01 Jul 2025 01:40:25 +0000</pubDate>
-      <guid isPermaLink="false">4bf0fbce-ef2d-48a1-aaae-15ad930a7ee0</guid>
-      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; TI Map IP Entity to CommonSecurityLog (1.2.4)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence/Analytic%20Rules/IPEntity_CustomSecurityLog.yaml'&gt;66c81ae2-1f89-4433-be00-2fbbd9ba5ebe&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
+      <pubDate>Fri, 01 Aug 2025 01:47:03 +0000</pubDate>
+      <guid isPermaLink="false">6e5b4c2a-33ae-4f83-acf5-da1519d83279</guid>
+      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; New External User Granted Admin Role (1.0.4)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Cloud%20Identity%20Threat%20Protection%20Essentials/Analytic%20Rules/NewExtUserGrantedAdmin.yaml'&gt;d7424fd9-abb3-4ded-a723-eebe023aaa0b&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
     </item>
   </channel>
 </rss>
