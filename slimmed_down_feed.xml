@@ -3,13 +3,6 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Fri, 01 Aug 2025 01:47:03 GMT</lastBuildDate>
-    <item>
-      <title>July 2025: Updated Rules</title>
-      <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
-      <pubDate>Fri, 01 Aug 2025 01:47:03 +0000</pubDate>
-      <guid isPermaLink="false">6e5b4c2a-33ae-4f83-acf5-da1519d83279</guid>
-      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; New External User Granted Admin Role (1.0.4)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Cloud%20Identity%20Threat%20Protection%20Essentials/Analytic%20Rules/NewExtUserGrantedAdmin.yaml'&gt;d7424fd9-abb3-4ded-a723-eebe023aaa0b&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
-    </item>
+    <lastBuildDate>Mon, 01 Sep 2025 01:27:09 GMT</lastBuildDate>
   </channel>
 </rss>
