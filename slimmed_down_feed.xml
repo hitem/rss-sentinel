@@ -3,6 +3,13 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Tue, 01 Oct 2024 02:24:03 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 01 Nov 2025 01:22:19 GMT</lastBuildDate>
+    <item>
+      <title>October 2025: Updated Rules</title>
+      <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
+      <pubDate>Sat, 01 Nov 2025 01:22:19 +0000</pubDate>
+      <guid isPermaLink="false">77f33cec-1366-4f7d-8e58-686acdc19c48</guid>
+      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Multiple Sources Affected by the Same TI Destination (1.1.4)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20Firewall/Analytic%20Rules/Azure%20Firewall%20-%20Multiple%20Sources%20Affected%20by%20the%20Same%20TI%20Destination.yaml'&gt;4644baf7-3464-45dd-bd9d-e07687e25f81&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
+    </item>
   </channel>
 </rss>
