@@ -130,6 +130,7 @@ github_file_urls = [
 output_file = "slimmed_down_feed.xml"
 processed_versions_file = "processed_versions.txt"
 log_file = "removed_or_moved_files.txt"
+previous_urls_file = "previous_urls.txt"
 
 # Read previously processed versions
 try:
@@ -144,6 +145,19 @@ try:
                 processed_versions[rule_id] = [version, last_updated]
 except FileNotFoundError:
     processed_versions = {}
+
+# Read URLs from previous run (to detect rules removed from the list)
+try:
+    with open(previous_urls_file, "r") as f:
+        previous_urls = set(line.strip() for line in f if line.strip())
+except FileNotFoundError:
+    previous_urls = set()
+
+# Current URLs (from the hardcoded list in this script)
+current_urls = set(github_file_urls)
+
+# URLs that were present last run, but are no longer in the list now
+manually_removed_urls = previous_urls - current_urls
 
 # Function to convert GitHub URL to raw URL
 def convert_to_raw_url(github_url):
@@ -202,6 +216,24 @@ def remove_url_from_list(url):
                 else:
                     file.write(line)
 
+        # Also remove from previous_urls.txt so it isn't reported again next run
+        try:
+            with open(previous_urls_file, "r") as f:
+                prev_lines = f.readlines()
+            with open(previous_urls_file, "w") as f:
+                for line in prev_lines:
+                    if line.strip() != url:
+                        f.write(line)
+        except FileNotFoundError:
+            # It's fine if the file doesn't exist yet
+            pass
+
+        # Keep current_urls in sync so we don't report this URL as "manually removed" next run
+        try:
+            current_urls.discard(url)
+        except NameError:
+            pass
+
         # Log the removal
         with open(log_file, "a") as log:
             log.write(
@@ -220,15 +252,19 @@ def fetch_url(url):
         print(f"Error fetching {url}: {e}")
         return url, None
 
+new_entries = []
+updated_entries = []
+removed_entries = []
+invalid_entries = []
+
+# Treat URLs that disappeared from the hardcoded list as "removed"
+for url in manually_removed_urls:
+    removed_entries.append(url)
+
 # Parallel fetching of URLs
 with concurrent.futures.ThreadPoolExecutor() as executor:
     future_to_url = {executor.submit(
         fetch_url, url): url for url in github_file_urls}
-
-    new_entries = []
-    updated_entries = []
-    removed_entries = []
-    invalid_entries = []
 
     for future in concurrent.futures.as_completed(future_to_url):
         url, response = future.result()
@@ -253,7 +289,7 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
                 processed_versions[rule_id] = [rule_version, fields["updated"]]
             else:
                 # No change
-                pass 
+                pass
         else:
             removed_entries.append(url)
             remove_url_from_list(url)
@@ -330,6 +366,11 @@ with open(processed_versions_file, "w") as f:
         version, updated = data
         f.write(f"{rule_id} {version} {updated}\n")
 
+# Update previous_urls.txt with the current list of URLs
+with open(previous_urls_file, "w") as f:
+    for url in sorted(current_urls):
+        f.write(url + "\n")
+
 # Log invalid entries with missing 'id'
 with open(log_file, "a") as log:
     if invalid_entries:
@@ -341,3 +382,4 @@ with open(log_file, "a") as log:
 # Set the RSS_FEED_ENTRIES environment variable
 with open(os.environ["GITHUB_ENV"], "a") as f:
     f.write(f"RSS_FEED_ENTRIES={len(new_entries) + len(updated_entries)}\n")
+
