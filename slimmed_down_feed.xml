@@ -3,6 +3,13 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Thu, 01 Jan 2026 01:43:17 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 01 Feb 2026 02:05:49 GMT</lastBuildDate>
+    <item>
+      <title>January 2026: Updated Rules</title>
+      <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
+      <pubDate>Sun, 01 Feb 2026 02:05:49 +0000</pubDate>
+      <guid isPermaLink="false">b501b00a-db2c-4eae-8d3e-ae20764fcd2d</guid>
+      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; ADFS DKM Master Key Export (1.2.2)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Detections/MultipleDataSources/ADFS-DKM-MasterKey-Export.yaml'&gt;18e6a87e-9d06-4a4e-8b59-3469cd49552d&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; TI map Domain entity to SecurityAlert (1.4.4)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence/Analytic%20Rules/DomainEntity_SecurityAlert.yaml'&gt;87890d78-3e05-43ec-9ab9-ba32f4e01250&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Non Domain Controller Active Directory Replication (1.0.6)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Windows%20Security%20Events/Analytic%20Rules/NonDCActiveDirectoryReplication.yaml'&gt;b9d2eebc-5dcb-4888-8165-900db44443ab&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
+    </item>
   </channel>
 </rss>
