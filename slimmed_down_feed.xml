@@ -3,13 +3,13 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Mon, 01 Jun 2026 03:45:51 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 01 Jul 2026 03:33:31 GMT</lastBuildDate>
     <item>
-      <title>May 2026: Updated Rules</title>
+      <title>June 2026: Updated Rules</title>
       <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
-      <pubDate>Mon, 01 Jun 2026 03:45:51 +0000</pubDate>
-      <guid isPermaLink="false">cf8e5daf-e20c-4615-bab1-5cfbbe53b9e0</guid>
-      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Port Scan (1.1.3)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20Firewall/Analytic%20Rules/Azure%20Firewall%20-%20Port%20Scan.yaml'&gt;b2c5907b-1040-4692-9802-9946031017e8&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Multiple Sources Affected by the Same TI Destination (1.1.5)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20Firewall/Analytic%20Rules/Azure%20Firewall%20-%20Multiple%20Sources%20Affected%20by%20the%20Same%20TI%20Destination.yaml'&gt;4644baf7-3464-45dd-bd9d-e07687e25f81&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Abnormal Deny Rate for Source IP (1.1.3)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20Firewall/Analytic%20Rules/Azure%20Firewall%20-%20Abnormal%20Deny%20Rate%20for%20Source%20IP.yaml'&gt;d36bb1e3-5abc-4037-ad9a-24ba3469819e&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Port Sweep (1.2.3)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20Firewall/Analytic%20Rules/Azure%20Firewall%20-%20Port%20Sweep.yaml'&gt;720335f4-ee8c-4270-9424-d0859222168c&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Several deny actions registered (1.1.2)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20Firewall/Analytic%20Rules/SeveralDenyActionsRegistered.yaml'&gt;f8dad4e9-3f19-4d70-ab7f-8f19ccd43a3e&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
+      <pubDate>Wed, 01 Jul 2026 03:33:31 +0000</pubDate>
+      <guid isPermaLink="false">ac07429d-6578-46bb-929d-062d7270a4b3</guid>
+      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; TI Map Domain entity to Dns Events (ASIM DNS Schema) (1.2.4)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence%20%28NEW%29/Analytic%20Rules/imDns_DomainEntity_DnsEvents.yaml'&gt;7c1ea2e6-6210-412c-92e4-180803a741b4&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; TI Map IP entity to DNS Events (ASIM DNS schema) (1.2.11)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence%20%28NEW%29/Analytic%20Rules/imDns_IPEntity_DnsEvents.yaml'&gt;b306fba8-1a28-449f-aa24-30362e16d4f5&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
     </item>
   </channel>
 </rss>
