@@ -3,13 +3,13 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Wed, 01 Jul 2026 03:33:31 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 01 Aug 2026 02:31:16 GMT</lastBuildDate>
     <item>
-      <title>June 2026: Updated Rules</title>
+      <title>July 2026: Updated Rules</title>
       <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
-      <pubDate>Wed, 01 Jul 2026 03:33:31 +0000</pubDate>
-      <guid isPermaLink="false">ac07429d-6578-46bb-929d-062d7270a4b3</guid>
-      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; TI Map Domain entity to Dns Events (ASIM DNS Schema) (1.2.4)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence%20%28NEW%29/Analytic%20Rules/imDns_DomainEntity_DnsEvents.yaml'&gt;7c1ea2e6-6210-412c-92e4-180803a741b4&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; TI Map IP entity to DNS Events (ASIM DNS schema) (1.2.11)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Threat%20Intelligence%20%28NEW%29/Analytic%20Rules/imDns_IPEntity_DnsEvents.yaml'&gt;b306fba8-1a28-449f-aa24-30362e16d4f5&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
+      <pubDate>Sat, 01 Aug 2026 02:31:16 +0000</pubDate>
+      <guid isPermaLink="false">cb971326-45a8-42ba-a27b-f108c221cc99</guid>
+      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Several deny actions registered (1.1.3)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20Firewall/Analytic%20Rules/SeveralDenyActionsRegistered.yaml'&gt;f8dad4e9-3f19-4d70-ab7f-8f19ccd43a3e&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
     </item>
   </channel>
 </rss>
