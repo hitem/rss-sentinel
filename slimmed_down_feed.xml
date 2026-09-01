@@ -3,13 +3,13 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Sat, 01 Aug 2026 02:31:16 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 01 Sep 2026 03:28:07 GMT</lastBuildDate>
     <item>
-      <title>July 2026: Updated Rules</title>
+      <title>August 2026: Updated Rules</title>
       <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
-      <pubDate>Sat, 01 Aug 2026 02:31:16 +0000</pubDate>
-      <guid isPermaLink="false">cb971326-45a8-42ba-a27b-f108c221cc99</guid>
-      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Several deny actions registered (1.1.3)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20Firewall/Analytic%20Rules/SeveralDenyActionsRegistered.yaml'&gt;f8dad4e9-3f19-4d70-ab7f-8f19ccd43a3e&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
+      <pubDate>Tue, 01 Sep 2026 03:28:07 +0000</pubDate>
+      <guid isPermaLink="false">283c4f98-ca82-43dc-84ac-7a74350b5c18</guid>
+      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Malware in the recycle bin (1.1.6)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Endpoint%20Threat%20Protection%20Essentials/Analytic%20Rules/malware_in_recyclebin.yaml'&gt;75bf9902-0789-47c1-a5d8-f57046aa72df&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
     </item>
   </channel>
 </rss>
