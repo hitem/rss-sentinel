@@ -3,13 +3,13 @@
     <title>Slimmed Down GitHub YAML Updates</title>
     <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
     <description>A feed of updated YAML files from GitHub</description>
-    <lastBuildDate>Tue, 01 Sep 2026 03:28:07 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 01 Oct 2026 04:02:27 GMT</lastBuildDate>
     <item>
-      <title>August 2026: Updated Rules</title>
+      <title>September 2026: Updated Rules</title>
       <link>https://hitem.github.io/rss-sentinel/slimmed_down_feed.xml</link>
-      <pubDate>Tue, 01 Sep 2026 03:28:07 +0000</pubDate>
-      <guid isPermaLink="false">283c4f98-ca82-43dc-84ac-7a74350b5c18</guid>
-      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Malware in the recycle bin (1.1.6)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Endpoint%20Threat%20Protection%20Essentials/Analytic%20Rules/malware_in_recyclebin.yaml'&gt;75bf9902-0789-47c1-a5d8-f57046aa72df&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
+      <pubDate>Thu, 01 Oct 2026 04:02:27 +0000</pubDate>
+      <guid isPermaLink="false">3e7881f9-b5de-4fdd-8fb8-6142b1ca7bc3</guid>
+      <description>Updated rules:&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Suspicious application consent for offline access (1.0.3)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Microsoft%20Entra%20ID/Analytic%20Rules/SuspiciousOAuthApp_OfflineAccess.yaml'&gt;3533f74c-9207-4047-96e2-0eb9383be587&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Name:&lt;/b&gt; Azure RBAC (Elevate Access) (1.0.1)&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; &lt;a href='https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Microsoft%20Entra%20ID/Analytic%20Rules/AzureRBAC.yaml'&gt;132fdff4-c044-4855-a390-c1b71e0f833b&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;</description>
     </item>
   </channel>
 </rss>
